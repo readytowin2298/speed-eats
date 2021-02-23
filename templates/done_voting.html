@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="container">
+            <h3 class="display-3"> The People have spoken!</h3>
+        </div>
+        <div class="row">
+            <h4 class="display-4">Vote Winners!</h4>
+            {% for resturaunt in leaders %}
+                <div class="col col-4">
+                    {% include 'resturaunt-base.html' %}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="row">
+            <h4 class="display-4">Voted Out:</h4>
+            {% for resturaunt in resturaunts %}
+                <div class="col col-2">
+                    <img src="/static/images/x-mark-48.png">
+                    {% include 'resturaunt-base.html' %}
+                </img>
+                </div>
+                
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}

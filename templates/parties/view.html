@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="container justify-content-center">
+            <h3 class="display-3">
+                Details for: {{party.name}}
+            </h3>
+            <div class="container justify-content-center">
+                <div class="container">
+                    <a href="/vote/{{party.id}}" class="btn btn-success btn-lg">
+                        Go Vote!
+                    </a>
+                </div>
+            </div>
+            <ul class="list-group">
+                <li class="list-group-item">Party: {{party.name}}</li>
+                <li class="list-group-item">
+                    Party Id: {{party.id}}
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            Send this to a friend so that they can join your party!
+                        </li>
+                    </ul>
+                </li>
+                <li class="list-group-item">Central Point: {{party.address}}</li>
+                <li class="list-group-item">Number of Members: {{party.members | length}}</li>
+                <li class="list-group-item">
+                    Members:
+                    <ul class="list-group">
+                        {% for member in party.members %}
+                            <li class="list-group-item">{{ member.name }}</li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                
+                <li class="list-group-item">Votes Cast: {{party.votes | length}}</li>
+                <li class="list-group-item">Open to new Member: {{party.accepting_members}}</li>
+                
+            </ul>
+            {% if g.user == party.leader  %}
+                <form action="/parties/{{party.id}}/accept_members" method="POST">
+                    {% if party.accepting_members %}
+                        <button class="btn btn-sm btn-warning">Close To New Members</button>
+                    {% else %}
+                        <div class="form-group">
+                            <button class="btn btn-sm btn-warning">Open to new Members</button>
+                            <small class="form-control" style="color: red;">Voting for all members will start over</small>
+                        </div>
+                        
+                    {% endif %}
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+    <div class="container d-flex justify-content-around">
+       
+    </div>
+    <div class="container d-flex justify-content-center">
+        {% for party in g.user.parties %}
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><a href="/parties/{{party.id}}">{{party.name}}</a></h5>
+                    <p class="card-text">Party near: {{party.address}} <br>
+                        Number of members: {{party.members | length}} <br>
+                        Leader: {{party.leader.name}} <br>
+                        Open to new Members: {{party.accept_members}}
+                    </p>
+                    
+                        
+                    
+                    <a href="/parties/{{party.id}}" class="btn btn-primary">Check it out!</a>
+                  </div>
+                  <div class="container justify-content-right">
+                    <form method="POST" action="/parties/delete/{{party.id}}">
+                        <button><i class="fas fa-dumpster-fire"></i></button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+        {% if not g.user.parties %}
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="/parties/create">Create a new Party!</a>
+                    </h5>
+                    <p class="card-text">
+                        Did a friend invite you to join their party? <br>
+                        <a href="/parties/add_member"> Go Join it!</a>
+                    </p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
