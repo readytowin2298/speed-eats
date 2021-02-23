@@ -7,6 +7,11 @@
             <h3 class="display-3"> The People have spoken!</h3>
         </div>
         <div class="row">
+            {% if g.user == party.leader %}
+                <a href="/vote/more/{{party.id}}" class="btn btn-success btn-success">Vote again?</a>
+            {% endif %}
+        </div>
+        <div class="row">
             <h4 class="display-4">Vote Winners!</h4>
             {% for resturaunt in leaders %}
                 <div class="col col-4">

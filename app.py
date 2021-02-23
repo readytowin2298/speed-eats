@@ -1,7 +1,7 @@
 import os
 from flask import Flask, render_template, request, flash, redirect, session, g
 from models import connect_db, db, User, Party, PartyMember, Resturaunt, Vote
-from forms import UserForm, LoginForm, AddMemberForm, PartyForm, VoteForm, BooleanField
+from forms import UserForm, LoginForm, AddMemberForm, PartyForm, VoteForm, BooleanField, VoteAgainForm
 import requests
 
 CURR_USER_KEY = "curr_user"
@@ -275,7 +275,11 @@ def finished_voting(party_id):
         resturaunt = Resturaunt.query.filter_by(id=r).first()
         leaders.append(resturaunt)
     resturaunts = Resturaunt.query.filter_by(party_id=party_id, voted_out=True).all()
-    return render_template('done_voting.html', leaders=leaders, resturaunts=resturaunts)
+    return render_template('done_voting.html', leaders=leaders, resturaunts=resturaunts, party=p)
+
+@app.route('/vote/more/<int:party_id>', methods=['GET','POST'])
+def vote_more(party_id):
+    return render_template('/vote/vote-more.html', form=VoteAgainForm())
     
    
             

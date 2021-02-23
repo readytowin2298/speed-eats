@@ -45,3 +45,9 @@ class PartyForm(FlaskForm):
 class VoteForm(FlaskForm):
 
     yay_or_nay = BooleanField("I'd Eat Here!")
+
+class VoteAgainForm(FlaskForm):
+
+    include_same = BooleanField("Use the winners from this round")
+
+    add_new = IntegerField("Add __ new resturaunts", default=0)
