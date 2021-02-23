@@ -181,8 +181,8 @@ def show_party(party_id):
     if not party:
         flash("Sorry, we can't find that party", category='warning')
         return redirect('/')
-    # if party.voting_done():
-    #     return 'hi'
+    if party.voting_done():
+        return redirect(f'/done_voting/{party_id}')
     return render_template('/parties/view.html', party=party)
 
 
