@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, TextAreaField, IntegerField, BooleanField
-from wtforms.validators import DataRequired, Length
+from wtforms.validators import DataRequired, Length, 
 
 """Forms for SpeadEats"""
 
@@ -8,8 +8,7 @@ class UserForm(FlaskForm):
     """Form for adding or editing users"""
 
     email = StringField('Email',
-        validators=[Email(message='Must be a valid email'),
-            DataRequired()])
+        validators=[DataRequired()])
     password = PasswordField('Password',
         validators=[DataRequired(),
             Length(min=8,
