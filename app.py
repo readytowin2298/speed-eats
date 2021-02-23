@@ -1,6 +1,5 @@
 import os
 from flask import Flask, render_template, request, flash, redirect, session, g
-from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User, Party, PartyMember, Resturaunt, Vote
 from forms import UserForm, LoginForm, AddMemberForm, PartyForm, VoteForm, BooleanField
 import requests
@@ -13,7 +12,7 @@ app = Flask(__name__)
 # Get DB_URI from environ variable (useful for production/testing) or,
 # if not set there, use development local db.
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    os.environ.get('DATABASE_URL', 'postgres:///flask-heroku'))
+    os.environ.get('DATABASE_URL', 'postgres:///speed_eats'))
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
