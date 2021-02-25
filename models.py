@@ -17,26 +17,6 @@ def connect_db(app):
     db.app = app
     db.init_app(app)
 
-# def get_geo(addr):
-#     url = "https://us1.locationiq.com/v1/search.php"
-#     try:
-#         res = requests.get(url, params={
-#             "key" : GEO_KEY,
-#             "q" : addr,
-#             "format" : "json"
-#         })
-#         data = res.json()
-#     except:
-#         return None
-#     if type(data) == dict:
-#         return None
-#     lat = data[0]['lat']
-#     lon = data[0]['lon']
-
-#     return {
-#         "lat" : lat,
-#         "lon" : lon
-#     }
 
 class User(db.Model):
     """Model for all Users"""
@@ -212,6 +192,25 @@ class Party(db.Model):
                         leaders.append((r,count))
                 return leaders
         return None
+    
+    def vote_more(self, same=True, more=False):
+        leaders = self.get_leaders()
+        if not same:
+            resturaunts = []
+            for (r, count) in leaders:
+                rest = Resturaunt.query.filter_by(id=r).first()
+                rest.voted_out = True
+                db.session.add(rest)
+            db.session.commit()
+        if more or len(Resturaunt.query.filter_by(party_id=self.id, voted_out=False).all()) < 2:
+            Resturaunt.get_resturaunts(party_id=self.id)
+        
+        if len(Resturaunt.query.filter_by(party_id=self.id, voted_out=False).all()) >= 2:
+            return True
+        return False
+        
+
+                
 
 
 
