@@ -50,4 +50,4 @@ class VoteAgainForm(FlaskForm):
 
     include_same = BooleanField("Use the winners from this round")
 
-    add_new = IntegerField("Add __ new resturaunts", default=0)
+    add_new = BooleanField("Add new resturaunts?")
