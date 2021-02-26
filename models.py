@@ -173,41 +173,17 @@ class Party(db.Model):
         return self.address + ", " + self.city + ", " + self.state + ", " + str(self.zip_code)
     
     def done_voting(self):
-        for vote in self.votes:
-            if vote.resturaunt.voted_out:
-                db.session.delete(vote)
-        db.session.commit()
         curr_resturaunts = Resturaunt.query.filter_by(party_id=self.id, voted_out=False).all()
-        if len(self.members) * len(curr_resturaunts) == len(self.votes):
+        votes = Vote.query.filter_by(party_id=self.id).all()
+        curr_votes = []
+        for vote in votes:
+            if vote.resturaunt.voted_out == False:
+                curr_votes.append(vote)
+        if len(self.members) * len(curr_resturaunts) == len(curr_votes):
             return True
         return False
-    def get_leaders(self):
-        if self.done_voting():
-            votes = Vote.get_sort(self.id)
-            most = votes[0][0]
-            if votes:
-                leaders = []
-                for (count, r) in votes:
-                    if count >= most:
-                        leaders.append((r,count))
-                return leaders
-        return None
     
-    def vote_more(self, same=True, more=False):
-        leaders = self.get_leaders()
-        if not same:
-            resturaunts = []
-            for (r, count) in leaders:
-                rest = Resturaunt.query.filter_by(id=r).first()
-                rest.voted_out = True
-                db.session.add(rest)
-            db.session.commit()
-        if more or len(Resturaunt.query.filter_by(party_id=self.id, voted_out=False).all()) < 2:
-            Resturaunt.get_resturaunts(party_id=self.id)
-        
-        if len(Resturaunt.query.filter_by(party_id=self.id, voted_out=False).all()) >= 2:
-            return True
-        return False
+    
         
 
                 
@@ -319,6 +295,10 @@ class Resturaunt(db.Model):
         address += ' '
         address += str(self.zip_code)
         return address
+
+    def get_positive_votes(self):
+        votes = Vote.query.filter_by(party_id=self.id, yay_or_nay=True).all()
+        return len(votes)
                     
 
 
@@ -353,7 +333,8 @@ class Vote(db.Model):
         already_voted = Vote.query.filter_by(party_id=p.id, member_id=member.id, resturaunt_id=r.id).first()
         if already_voted:
             return None
-        if r and p:
+        
+        if r and p and yay:
             v = Vote(party_id=party_id,
                 member_id=member.id,
                 resturaunt_id=resturaunt_id,
@@ -368,23 +349,18 @@ class Vote(db.Model):
     
     @classmethod
     def get_sort(cls, party_id):
-        """Returns a dict of every resturaunt that recievd more than half the votes,
+        """Returns a list of every resturaunt that recievd more than half the votes,
         keys are resturaunt ids and values are number of votes"""
 
-        p = Party.query.filter_by(id=party_id).first()
-        if p:
-            if p.done_voting():
-                votes = p.count_all_votes()
-                member_count = len(p.members)
-                maj = member_count/2
-                maj_votes = []
-                for key in votes.keys():
-                    if votes[key] >= maj:
-                        maj_votes.append((votes[key], key))
-                maj_votes.sort(reverse=True)
-                return maj_votes
-                        
-        return None
+        # p = Party.query.filter_by(id=party_id).first()
+        # if p:
+        #     if p.done_voting():
+        #         votes = [vote in p.votes if vote.resturaunt.voted_out == False]
+
+
+                
+
+    
 
     
 

@@ -6,7 +6,7 @@
             <li class="list-group-item">Address: {{ resturaunt.get_full_address() }}</li>
             <li class="list-group-item">Website: <a class="badge bg-success" href="{{ resturaunt.url }}" >Check it out</a></li>
             <li class="list-group-item">
-                Number of Votes: {{ resturaunt.votes | length }}
+                Number of Votes: {{ resturaunt.get_positive_votes() }}
             </li>
         </ul>
     </p>
