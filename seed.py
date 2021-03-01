@@ -26,9 +26,10 @@ valentine.add_member(tori.id)
 for member in valentine.members:
     for resturaunt in valentine.resturaunts:
         vote = True if random.randint(0,1) else False
-        Vote.vote(member=member,
+        new_vote = Vote.vote(member=member,
                     party_id=valentine.id,
                     resturaunt_id=resturaunt.id,
                     yay=vote)
+        print(new_vote)
 
 

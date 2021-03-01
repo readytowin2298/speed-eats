@@ -284,7 +284,7 @@ class Resturaunt(db.Model):
                     )
                     
                     resturaunts.append(new_resturaunt)
-                    print(new_resturaunt)
+                    
         return resturaunts
 
     def get_full_address(self):
@@ -333,9 +333,9 @@ class Vote(db.Model):
         p = Party.query.filter_by(id=party_id).first()
         already_voted = Vote.query.filter_by(party_id=p.id, member_id=member.id, resturaunt_id=r.id).first()
         if already_voted:
-            return None
+            return 'Already Voted for this resturaunt'
         
-        if r and p and yay:
+        if r and p:
             v = Vote(party_id=party_id,
                 member_id=member.id,
                 resturaunt_id=resturaunt_id,
@@ -345,18 +345,19 @@ class Vote(db.Model):
                 db.session.commit()
                 return v
             except:
-                return None
-        return None
+                return 'Database Error'
+        return "Couldn't find resources"
     
     @classmethod
     def get_sort(cls, party_id):
         """Returns a list of every resturaunt that recievd more than half the votes,
         keys are resturaunt ids and values are number of votes"""
 
-        # p = Party.query.filter_by(id=party_id).first()
-        # if p:
-        #     if p.done_voting():
-        #         votes = [vote in p.votes if vote.resturaunt.voted_out == False]
+        p = Party.query.filter_by(id=party_id).first()
+        if p:
+            if p.done_voting():
+                resturaunts = [resturaunt for restuaunt in p.resturaunts 
+                    if resturaunt.voted_out == False] 
 
 
                 
