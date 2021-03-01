@@ -138,7 +138,7 @@ class Party(db.Model):
         try:
             zip_code = int(zip_code)
         except:
-            return None
+            return 'Invalid Zip'
 
         r = Resturaunt(name=name,
             address=address,
@@ -153,7 +153,7 @@ class Party(db.Model):
             db.session.commit()
         except:
             db.session.rollback()
-            return None
+            return 'Database Error'
         return r
 
     def count_all_votes(self):
@@ -234,8 +234,7 @@ class Resturaunt(db.Model):
     party = db.relationship('Party',
                 backref='resturaunts')
     yelp_id = db.Column(db.Text,
-                nullable=True,
-                unique=True)
+                nullable=True)
     image_url = db.Column(db.Text,
                 nullable=False)
     votes = db.relationship('Vote',
@@ -255,7 +254,7 @@ class Resturaunt(db.Model):
                 "Authorization" : f"Bearer {YELP_KEY}"
             },
             params={
-                "location" : "113 Hancock St Venus texas 76084",
+                "location" : party.get_full_address(),
                 "limit" : count,
                 "categories" : "Resturaunts",
                 "offset" : offset
@@ -264,7 +263,7 @@ class Resturaunt(db.Model):
         resturaunt_data = r.json()['businesses']
         resturaunts = []
         for resturaunt in resturaunt_data:
-            if not Resturaunt.query.filter_by(party_id=1, yelp_id=resturaunt['id']).first():
+            if not Resturaunt.query.filter_by(party_id=party.id, yelp_id=resturaunt['id']).first():
                 address = ""
                 if resturaunt['location']['address1']:
                     address += resturaunt['location']['address1']
@@ -283,7 +282,9 @@ class Resturaunt(db.Model):
                         yelp_id=resturaunt['id'],
                         image_url=resturaunt['image_url']
                     )
+                    
                     resturaunts.append(new_resturaunt)
+                    print(new_resturaunt)
         return resturaunts
 
     def get_full_address(self):

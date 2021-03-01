@@ -152,7 +152,7 @@ def create_party():
         if type(p) == str:
             flash(p, category='info')
         else:
-            flash('Successfully added to party', category='success')
+            flash('Successfully added party', category='success')
             return redirect('/')
     return render_template('/parties/create.html', form=form)
 
