@@ -349,15 +349,23 @@ class Vote(db.Model):
         return "Couldn't find resources"
     
     @classmethod
-    def get_sort(cls, party_id):
+    def get_winners(cls, party_id):
         """Returns a list of every resturaunt that recievd more than half the votes,
         keys are resturaunt ids and values are number of votes"""
 
         p = Party.query.filter_by(id=party_id).first()
         if p:
             if p.done_voting():
-                resturaunts = [resturaunt for restuaunt in p.resturaunts 
+                resturaunts = [resturaunt for resturaunt in p.resturaunts 
                     if resturaunt.voted_out == False] 
+                winners = []
+                for resturaunt in resturaunts:
+                    votes = Vote.query.filter_by(resturaunt_id=resturaunt.id, yay_or_nay=True).all()
+                    if len(votes) >= len(p.members):
+                        winners.append(resturaunt)
+                return winners
+        return None
+                
 
 
                 
