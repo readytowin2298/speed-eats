@@ -46,6 +46,8 @@ def do_logout():
 
 
 
+"""Basic Routes"""
+
 @app.route('/')
 def show_home():
     res = []
@@ -113,6 +115,8 @@ def log_in_user():
             flash('Invalid Credentials', category='danger')
 
     return render_template('/users/login.html', form=form)
+
+"""Party Routes"""
 
 @app.route('/parties/add_member', methods=['GET', 'POST'])
 def add_member():
@@ -211,6 +215,7 @@ def open_voting(party_id):
     return redirect(f'/parties/{party_id}')
         
 
+"""Voting Routes"""
 
 
 @app.route('/vote/<int:party_id>', methods=['GET'])
@@ -269,17 +274,10 @@ def finished_voting(party_id):
     if not p or not p.done_voting():
         flash("Not quite!", category='info')
         return redirect('/')
-    leader_data = p.get_leaders()
-    leaders = []
-    for (r,count) in leader_data:
-        resturaunt = Resturaunt.query.filter_by(id=r).first()
-        leaders.append(resturaunt)
+    leader_data = Vote.get_winners(party_id=p.id)
+    
     resturaunts = Resturaunt.query.filter_by(party_id=party_id, voted_out=True).all()
-    return render_template('done_voting.html', leaders=leaders, resturaunts=resturaunts, party=p)
-
-@app.route('/vote/more/<int:party_id>', methods=['GET','POST'])
-def vote_more(party_id):
-    return render_template('/vote/vote-more.html', form=VoteAgainForm())
+    return render_template('done_voting.html', leaders=leader_data, resturaunts=resturaunts, party=p)
     
    
             

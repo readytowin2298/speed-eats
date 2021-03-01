@@ -157,6 +157,7 @@ class Party(db.Model):
         return r
 
     def count_all_votes(self):
+        """Returns a dict with votes counts per resturaunt"""
         votes = self.votes
         if self.done_voting():
             vote_dict = {}
@@ -170,9 +171,11 @@ class Party(db.Model):
         return None
     
     def get_full_address(self):
+        """Returns formatted full address from Party"""
         return self.address + ", " + self.city + ", " + self.state + ", " + str(self.zip_code)
     
     def done_voting(self):
+        """Determines if enough votes have been cast to pick a winner"""
         curr_resturaunts = Resturaunt.query.filter_by(party_id=self.id, voted_out=False).all()
         votes = Vote.query.filter_by(party_id=self.id).all()
         curr_votes = []
@@ -182,6 +185,8 @@ class Party(db.Model):
         if len(self.members) * len(curr_resturaunts) == len(curr_votes):
             return True
         return False
+
+    
     
     
         
@@ -298,7 +303,7 @@ class Resturaunt(db.Model):
         return address
 
     def get_positive_votes(self):
-        votes = Vote.query.filter_by(party_id=self.id, yay_or_nay=True).all()
+        votes = Vote.query.filter_by(resturaunt_id=self.id, yay_or_nay=True).all()
         return len(votes)
                     
 
@@ -361,8 +366,12 @@ class Vote(db.Model):
                 winners = []
                 for resturaunt in resturaunts:
                     votes = Vote.query.filter_by(resturaunt_id=resturaunt.id, yay_or_nay=True).all()
-                    if len(votes) >= len(p.members):
+                    if len(votes) >= len(p.members)/2:
                         winners.append(resturaunt)
+                    else:
+                        resturaunt.voted_out = True
+                        db.session.add(resturaunt)
+                db.session.commit()
                 return winners
         return None
                 
