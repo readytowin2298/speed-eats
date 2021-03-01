@@ -111,10 +111,10 @@ class Party(db.Model):
         db.session.commit()
         added_to_party = p.add_member(leader_id)
         if not added_to_party:
-            return None
-        resturaunts = Resturaunt.get_resturaunts(p.id)
+            return "Couldn't create that party"
+        resturaunts = Resturaunt.get_resturaunts(party_id=p.id)
         if not resturaunts:
-            return None
+            return "Couldn't find resturaunts near there!"
         return p
 
 
