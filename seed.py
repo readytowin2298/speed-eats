@@ -1,5 +1,6 @@
 from models import User, db, Party, Vote
 import random
+from app import app
 
 db.drop_all()
 db.create_all()
