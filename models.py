@@ -182,6 +182,8 @@ class Party(db.Model):
         for vote in votes:
             if vote.resturaunt.voted_out == False:
                 curr_votes.append(vote)
+        if len(self.members) < 2 or len(self.votes) < 1:
+            return False
         if len(self.members) * len(curr_resturaunts) == len(curr_votes):
             return True
         return False
