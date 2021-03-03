@@ -1,45 +1,49 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-<div class="container justify-content-center">
-    <h3 class="display-3">
-        Vote on Resturaunts
-    </h3>
-    <div class="container">
-        <small class="text" style="color: red;" >Please note that leaving a box unchecked counts as a vote against</small>
-        <form action="/vote/{{ resturaunt.party.id }}/{{ resturaunt.id }}" method="POST">
-            {{ form.hidden_tag() }}
-                <div class="card">
-                    <h5 class="card-title">{{resturaunt.name}}</h5>
-                    <img src="{{resturaunt.image_url}}" style="width: 200px;" class="card-img-top">
-                    <p class="card-text">
-                        <ul class="list-group">
-                            <li class="list-group-item">Address: {{ resturaunt.get_full_address() }}</li>
-                            <li class="list-group-item">Website: <a href="{{ resturaunt.url }}" >Check it out</a></li>
-                            <li class="list-group-item">
-                                <div class="form-check">
-                                    {% for field in form if field.widget.input_type != 'hidden' %}
-                                        {% for error in field.errors %}
-                                            <span class="text-danger">{{ error }}</span>
-                                        {% endfor %}
-                                        {{ field.label }}
-                                        {{ field(class="form-check-input") }}
-                                    {% endfor %}
-                                  </div>
-                            </li>
-                        </ul>
-                        <button class="btn btn-success">Next</button>
-                    </p>
-                </div>
-            
-        </form>
+<div class="row justify-content-center">
+    <div class="col col-6 container justify-content-center">
+        <h3 class="display-3">
+            Vote on Resturaunts
+        </h3>
         <div class="container">
-            <a href="/parties/{{resturaunt.party.id}}" class="btn btn-info"><i class="fas fa-caret-square-left"></i></a>
-            <small>(Going back to party page will save all votes before this page)</small>
+            <small class="text" style="color: red;" >Please note that leaving a box unchecked counts as a vote against</small>
+            <form action="/vote/{{ resturaunt.party.id }}/{{ resturaunt.id }}" method="POST">
+                {{ form.hidden_tag() }}
+                    <div class="card text-center">
+                        <h5 class="card-title">{{resturaunt.name}}</h5>
+                        <div class="text-center">
+                            <img src="{{resturaunt.image_url}}" style="max-height: 200px; max-width: 200px;" class="img img-fluid">
+                        </div>
+                        <p class="card-text">
+                            <ul class="list-group">
+                                <li class="list-group-item">Address: {{ resturaunt.get_full_address() }}</li>
+                                <li class="list-group-item">Website: <a href="{{ resturaunt.url }}" >Check it out</a></li>
+                                <li class="list-group-item">
+                                    <div class="form-check">
+                                        {% for field in form if field.widget.input_type != 'hidden' %}
+                                            {% for error in field.errors %}
+                                                <span class="text-danger">{{ error }}</span>
+                                            {% endfor %}
+                                            {{ field.label }}
+                                            {{ field(class="form-check-input") }}
+                                        {% endfor %}
+                                      </div>
+                                </li>
+                            </ul>
+                            <button class="btn btn-success">Next</button>
+                        </p>
+                    </div>
+                
+            </form>
+            <div class="container">
+                <a href="/parties/{{resturaunt.party.id}}" class="btn btn-info"><i class="fas fa-caret-square-left"></i></a>
+                <small>(Going back to party page will save all votes before this page)</small>
+            </div>
         </div>
+        
     </div>
-    
 </div>
+
 
 {% endblock %}

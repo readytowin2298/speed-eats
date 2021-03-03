@@ -13,7 +13,7 @@
                 of your party
             </p>
         </div>
-        <div class="row">
+        <div class="row justify-content-center">
             <h4 class="display-4">Vote Winners!</h4>
             {% for resturaunt in leaders %}
                 <div class="col col-4">
@@ -21,10 +21,10 @@
                 </div>
             {% endfor %}
         </div>
-        <div class="row">
+        <div class="row justify-content-center">
             <h4 class="display-4">Voted Out:</h4>
             {% for resturaunt in resturaunts %}
-                <div class="col col-2">
+                <div class="col col-4">
                     <img src="/static/images/x-mark-48.png">
                     {% include 'resturaunt-base.html' %}
                 </img>
