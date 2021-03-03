@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, TextAreaField, IntegerField, BooleanField
+from wtforms import StringField, PasswordField, TextAreaField, IntegerField, BooleanField, RadioField
 from wtforms.validators import DataRequired, Length
 
 """Forms for SpeadEats"""
@@ -48,6 +48,4 @@ class VoteForm(FlaskForm):
 
 class VoteAgainForm(FlaskForm):
 
-    include_same = BooleanField("Use the winners from this round")
-
-    add_new = BooleanField("Add new resturaunts?")
+    resturaunts = RadioField("Resturaunts to vote on")

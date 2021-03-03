@@ -10,16 +10,11 @@
             <form action="" method="POST">
                 {{ form.hidden_tag() }}
 
-                {% for field in form if field.widget.input_type != 'hidden' %}
-                    <div class="form-check">
-                        {% for error in field.errors %}
-                            <span class="text-danger">{{ error }}</span><br>
-                        {% endfor %}
-                        {{ field(_class="form-check-input") }}
-                        {{ field.label(_class="form-check-label") }}<br>
-                    </div>
-                    
-                    
+                {% for subfield in form.resturaunts %}
+                    <tr>
+                        <td>{{ subfield }}</td>
+                        <td>{{ subfield.label }}</td>
+                    </tr>
                 {% endfor %}
                 <button class="btn btn-lg btn-success" id="submit">Submit!</button>
             </form>

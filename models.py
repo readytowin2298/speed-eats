@@ -249,6 +249,7 @@ class Resturaunt(db.Model):
                 backref='resturaunt')
     
     
+    
     @classmethod
     def get_resturaunts(cls, party_id, count=10):
         party = Party.query.filter_by(id=party_id).first()
