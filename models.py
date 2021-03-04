@@ -2,6 +2,7 @@ from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from secret import GEO_KEY, YELP_KEY, YELP_CLIENT_ID
 import requests
+from sqlalchemy.orm import backref
 bcrypt = Bcrypt()
 db = SQLAlchemy()
 
@@ -16,6 +17,25 @@ def connect_db(app):
 
     db.app = app
     db.init_app(app)
+
+def yelp(address, count=10, offset=0):
+    r = requests.get(
+            YELP_BASE_URL, headers={
+                "Authorization" : f"Bearer {YELP_KEY}"
+            },
+            params={
+                "location" : address,
+                "limit" : count,
+                "categories" : "Resturaunts",
+                "offset" : offset
+            }
+        )
+    data = r.json()
+    if data.get('error') or data.get('errors'):
+        return None
+    resturaunt_data = data['businesses']
+    return resturaunt_data
+
 
 
 class User(db.Model):
@@ -90,6 +110,7 @@ class Party(db.Model):
     accepting_members = db.Column(db.Boolean,
                 nullable=False,
                 default=True)
+    
     @classmethod
     def create(cls, address, city, state, zip_code, leader_id, name):
         """Create party, location data refers to 
@@ -112,9 +133,7 @@ class Party(db.Model):
         added_to_party = p.add_member(leader_id)
         if not added_to_party:
             return "Couldn't create that party"
-        resturaunts = Resturaunt.get_resturaunts(party_id=p.id)
-        if not resturaunts:
-            return "Couldn't find resturaunts near there!"
+        
         return p
 
 
@@ -239,7 +258,8 @@ class Resturaunt(db.Model):
                 nullable=False,
                 default=False)
     party = db.relationship('Party',
-                backref='resturaunts')
+                backref=backref('resturaunts', 
+                        cascade="delete-orphan, all"))
     yelp_id = db.Column(db.Text,
                 nullable=True)
     image_url = db.Column(db.Text,
@@ -254,22 +274,13 @@ class Resturaunt(db.Model):
     def get_resturaunts(cls, party_id, count=10):
         party = Party.query.filter_by(id=party_id).first()
         if not party:
-            return None
+            return "Couldn't find that party"
         curr_resturaunts = Resturaunt.query.filter_by(party_id=party.id).all()
         offset = len(curr_resturaunts)
-        r = requests.get(
-            YELP_BASE_URL, headers={
-                "Authorization" : f"Bearer {YELP_KEY}"
-            },
-            params={
-                "location" : party.get_full_address(),
-                "limit" : count,
-                "categories" : "Resturaunts",
-                "offset" : offset
-            }
-        )
-        resturaunt_data = r.json()['businesses']
+        resturaunt_data = yelp(address=party.get_full_address(), count=count, offset=offset)
         resturaunts = []
+        if not resturaunt_data:
+            return "Couldn't Process Address"
         for resturaunt in resturaunt_data:
             if not Resturaunt.query.filter_by(party_id=party.id, yelp_id=resturaunt['id']).first():
                 address = ""
@@ -292,6 +303,8 @@ class Resturaunt(db.Model):
                     )
                     
                     resturaunts.append(new_resturaunt)
+        if not resturaunts:
+            return 'Trouble adding resturaunts to database'
                     
         return resturaunts
 
@@ -329,9 +342,7 @@ class Vote(db.Model):
                 backref='votes')
     member = db.relationship('User',
                 backref='votes')
-    # resturaunt = db.relationship('Resturaunt',
-    #             cascade='all,delete',
-    #             backref='votes')
+    
     
     @classmethod 
     def vote(cls, member, party_id, resturaunt_id, yay):

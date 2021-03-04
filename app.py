@@ -157,6 +157,9 @@ def create_party():
             flash(p, category='info')
         else:
             flash('Successfully added party', category='success')
+            resturaunts = Resturaunt.get_resturaunts(party_id=p.id)
+            if type(resturaunts) == str:
+                flash(resturaunts, category='warning')
             return redirect('/')
     return render_template('/parties/create.html', form=form)
 
@@ -164,6 +167,7 @@ def create_party():
 def delete_party(party_id):
     party = Party.query.filter_by(id=party_id).first()
     if not party:
+        flash("Couldn't find that party!", category='warning')
         return redirect('/404')
 
     if not g.user or g.user != party.leader:
@@ -173,6 +177,7 @@ def delete_party(party_id):
     try:
         db.session.commit()
     except:
+        flash('Error interfacing with databases', category='danger')
         return redirect('/404')
     flash('Party was successfully deleted', category='success')
     return redirect('/')

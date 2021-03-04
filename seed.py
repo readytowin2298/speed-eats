@@ -1,4 +1,4 @@
-from models import User, db, Party, Vote
+from models import User, db, Party, Vote, Resturaunt
 import random
 from app import app
 
@@ -17,11 +17,14 @@ valentine = Party.create(address="12248 Hunter's Knoll Dr",
     leader_id=me.id,
     name="Valentine's day dinner")
 
+Resturaunt.get_resturaunts(party_id=valentine.id)
+
 valentine.add_member(kynsi.id)
 
 valentine.add_member(chris.id)
 
 valentine.add_member(tori.id)
+
 
 for member in valentine.members:
     for resturaunt in valentine.resturaunts:
@@ -30,6 +33,6 @@ for member in valentine.members:
                     party_id=valentine.id,
                     resturaunt_id=resturaunt.id,
                     yay=vote)
-        print(new_vote)
+
 
 
