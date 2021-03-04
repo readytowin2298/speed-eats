@@ -23,12 +23,12 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <div class="navbar-nav d-flex container-fluid">
+                    <div class="navbar-nav d-flex container-fluid justify-content-between">
                         
                         
 
                         {% if not g.user %}
-                            <ul class="nav navbar-nav navbar-right">
+                            <ul class="navbar-nav navbar-right">
                                 <li class="nav-item">
                                     <a class="nav-link" href="/signup">Sign up</a>
                                 </li>
@@ -36,7 +36,9 @@
                                     <a class="nav-link" href="/login">Log in</a>
                                 </li>
                             </ul>
-                        {% else %}
+                        {% endif %}
+
+                        {% if g.user %}
                             <ul class="nav navbar-nav navbar-left">
                                 <li class="nav-item">
                                     <a class="nav-link" href="/parties/add_member">Join a party</a>
@@ -53,10 +55,11 @@
                                     <a class="nav-link" href="/logout">Log out</a>
                                 </li>
                             </ul>
-                            
-                            
-                            
                         {% endif %}
+                            
+                            
+                            
+                        
                     </div>
                 </div>
             </div>
