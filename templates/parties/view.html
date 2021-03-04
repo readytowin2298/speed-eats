@@ -2,8 +2,8 @@
 
 {% block content %}
 
-    <div class="container">
-        <div class="container justify-content-center">
+    <div class="container row">
+        <div class="container col col-8 justify-content-center">
             <h3 class="display-3">
                 Details for: {{party.name}}
             </h3>
@@ -14,6 +14,7 @@
                     </a>
                 </div>
             </div>
+            <br>
             <ul class="list-group">
                 <li class="list-group-item">Party: {{party.name}}</li>
                 <li class="list-group-item">
@@ -39,11 +40,13 @@
                 <li class="list-group-item">Open to new Member: {{party.accepting_members}}</li>
                 
             </ul>
+            <br>
             {% if g.user == party.leader  %}
                 <form action="/parties/{{party.id}}/accept_members" method="POST">
                     {% if party.accepting_members %}
                         <button class="btn btn-sm btn-warning">Close To New Members</button>
                     {% else %}
+
                         <div class="form-group">
                             <button class="btn btn-sm btn-warning">Open to new Members</button>
                             <small class="form-control" style="color: red;">Voting for all members will start over</small>
