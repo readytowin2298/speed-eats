@@ -23,33 +23,39 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
+                    <!-- <div class="navbar-nav container-fluid"> -->
                         
                         
 
                         {% if not g.user %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="/signup">Sign up</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/login">Log in</a>
-                            </li>
+                            <ul class="nav justify-content-end">
+                                <li class="nav-item justify-content-end">
+                                    <a class="nav-link" href="/signup">Sign up</a>
+                                </li>
+                                <li class="nav-item justify-content-end">
+                                    <a class="nav-link" href="/login">Log in</a>
+                                </li>
+                            </ul>
                         {% else %}
+                            <ul class="nav">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/parties/add_member">Join a party</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/parties/create">Create a new party</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="" class="nav-link">{{ g.user.name }}</a>
+                                </li>
+                            </ul>
+                            <ul class="nav justify-content-end">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/logout">Log out</a>
+                                </li>
+                            </ul>
                             
-                            <li class="nav-item">
-                                <a class="nav-link" href="/logout">Log out</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/parties/add_member">Join a party</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/parties/create">Create a new party</a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="" class="nav-link">{{ g.user.name }}</a>
-                            </li>
                         {% endif %}
-                    </ul>
+                    <!-- </div> -->
                 </div>
             </div>
         </nav>
