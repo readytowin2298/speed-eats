@@ -279,19 +279,7 @@ def finished_voting(party_id):
     resturaunts = Resturaunt.query.filter_by(party_id=party_id, voted_out=True).all()
     return render_template('done_voting.html', leaders=leader_data, resturaunts=resturaunts, party=p)
 
-# @app.route('/vote_more/<int:party_id>', methods=['GET', 'POST'])
-# def sudden_death(party_id):
-#     if not g.user:
-#         return redirect(f"/parties/{party_id}")
-#     p = Party.query.filter_by(id=party_id).first()
-#     if not p or not p.done_voting():
-#         flash("Not quite!", category='info')
-#         return redirect('/')
-#     if not p.sudden_death():
-#         return redirect('/404')
-#     choices = [(resturaunt.id, resturaunt.name) for resturaunt in Resturaunt.query.filter_by(party_id=p.id).all()]
-#     form = VoteAgainForm(choices=choices)
-#     return render_template('/vote/vote-more.html')
+
 
     
    
