@@ -23,9 +23,12 @@
                     <a href="/parties/{{party.id}}" class="btn btn-primary">Check it out!</a>
                   </div>
                   <div class="container justify-content-right">
-                    <form method="POST" action="/parties/delete/{{party.id}}">
-                        <button><i class="fas fa-dumpster-fire"></i></button>
-                    </form>
+                    {% if g.user == party.leader %}
+                        <form class="form form-inline" method="POST" action="/parties/delete/{{party.id}}">
+                            <button><i class="fas fa-dumpster-fire"></i></button>
+                            <small style="color: red;" >Delete Party?</small>
+                        </form>
+                    {% endif %}
                 </div>
             </div>
         {% endfor %}
