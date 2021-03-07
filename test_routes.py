@@ -1,6 +1,7 @@
-from app import app, db, User, Party, Resturaunt, Vote
+from app import app, db, User, Party, Resturaunt, Vote, do_login, do_logout
 from flask import session
 from unittest import TestCase
+import random
 
 
 app.config['TESTING'] = True
@@ -37,17 +38,20 @@ class UserViewsTestCase(TestCase):
         db.session.add(user1)
         db.session.add(user2)
         db.session.commit()
-        print("inside setup")
 
         party = Party.create(address="12345 South Fwy",
                 city="Cross Timber",
                 state="Texas",
                 zip_code=76028,
                 leader_id=user1.id,
-                name="Valentine's day dinner")
+                name="Valentines day dinner")
         db.session.add(party)
         db.session.commit()
+        Resturaunt.get_resturaunts(party_id=party.id)
+        self.party=party
         party.add_member(member_id=user2.id)
+
+    
         
 
     def tearDown(self):
@@ -64,18 +68,39 @@ class UserViewsTestCase(TestCase):
 
         self.assertEqual(len(us), 2)
         self.assertEqual(len(ps), 1)
-        self.assertIn(us[0], ps[0].members)
-        self.assertIn(us[1], ps[0].members)
-        self.assertEqual(User.query.filter_by(email="test@test.com").first(), ps[0].leader)
+        self.assertIn(us[0], self.party.members)
+        self.assertIn(us[1], self.party.members)
+        self.assertEqual(User.query.filter_by(email="test@test.com").first(), self.party.leader)
         
 
-    def test_list_users(self):
+    def test_party_view(self):
         with app.test_client() as client:
-            resp = client.get("/users")
+            resp = client.get(f"/parties/{self.party.id}")
             html = resp.get_data(as_text=True)
 
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Users</h1>', html)
+            self.assertIn(f"""<h3 class="display-3">
+                Details for:""", html)
+            self.assertIn(f"Party: {self.party.name}", html)
+
+    def test_voting(self):
+        for member in self.party.members:
+            for resturaunt in self.party.resturaunts:
+                vote = True if random.randint(0,1) else False
+                new_vote = Vote.vote(member=member,
+                            party_id=self.party.id,
+                            resturaunt_id=resturaunt.id,
+                            yay=vote)
+        self.assertTrue(self.party.done_voting())
+
+        with app.test_client() as client:
+            do_login(user=self.party.leader)
+            resp = client.get(f"/parties/{self.party.id}", follow_redirects=True)
+            html = resp.get_data(as_text=True)
+
+            self.assertIn(f"""<a href="" class="nav-link">{self.party.leader.name}</a>""", html)
+            
+        
 
     # def test_show_user(self):
     #     with app.test_client() as client:

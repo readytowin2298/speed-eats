@@ -119,7 +119,9 @@ class Party(db.Model):
             zip_code = int(zip_code)
         except:
             return None
-        leader = User.query.get_or_404(leader_id)
+        leader = User.query.filter_by(id=leader_id).first()
+        if not leader:
+            return None
         p = Party(
             address=address,
             city=city,
@@ -149,6 +151,7 @@ class Party(db.Model):
                 db.session.commit()
                 return u
             except:
+                db.session.rollback()
                 return None
             
 
