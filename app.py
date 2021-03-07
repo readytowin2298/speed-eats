@@ -71,6 +71,10 @@ def signup():
         return 
 
     if form.validate_on_submit():
+        if User.query.filter_by(email=form.email.data).first():
+            form.email.errors.append("email must be unique")
+            flash("That email is already taken", category='warning')
+            return render_template('/users/signup.html', form=form)
         try:
             u = User.create(
                 email=form.email.data,
