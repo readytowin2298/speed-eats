@@ -143,6 +143,7 @@ def add_member():
         new_member = p.add_member(g.user.id)
         if new_member:
             flash("You have been successfully added to the party", category='success')
+            return redirect('/')
     return render_template('/parties/add-member.html', form=form)
 
 @app.route('/parties/create', methods=['POST', 'GET'])
