@@ -1,12 +1,11 @@
-from app import app, db, User, Party, Resturaunt, Vote, do_login, do_logout
-from flask import session
+from app import app, db, User, Party, Resturaunt, Vote, UserForm
 from unittest import TestCase
 import random
 
 
 app.config['TESTING'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///speed_eats_test'
-
+app.config['WTF_CSRF_ENABLED'] = False
 # class TestRoutes(TestCase):
 
 #     # executed prior to each test
@@ -60,7 +59,7 @@ class UserViewsTestCase(TestCase):
         db.session.rollback()
 
 
-    def test_setUp(self):
+    def test_models(self):
         """Test models created in setup"""
         us = User.query.all()
         ps = Party.query.all()
@@ -74,16 +73,23 @@ class UserViewsTestCase(TestCase):
         
 
     def test_party_view(self):
+        party_name = self.party.name
+        party_id = self.party.id
         with app.test_client() as client:
-            resp = client.get(f"/parties/{self.party.id}")
+            with client.session_transaction() as sess:
+                sess['curr_user'] = '1'
+                
+            resp = client.get(f"/parties/{party_id}")
             html = resp.get_data(as_text=True)
 
-            self.assertEqual(resp.status_code, 200)
-            self.assertIn(f"""<h3 class="display-3">
-                Details for:""", html)
-            self.assertIn(f"Party: {self.party.name}", html)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(f"""<h3 class="display-3">""", html)
+        self.assertIn(f"Party: {party_name}", html)
 
     def test_voting(self):
+        party_name = self.party.name
+        party_id = self.party.id
+        leader_name = self.party.leader.name
         for member in self.party.members:
             for resturaunt in self.party.resturaunts:
                 vote = True if random.randint(0,1) else False
@@ -94,11 +100,12 @@ class UserViewsTestCase(TestCase):
         self.assertTrue(self.party.done_voting())
 
         with app.test_client() as client:
-            do_login(user=self.party.leader)
-            resp = client.get(f"/parties/{self.party.id}", follow_redirects=True)
+            with client.session_transaction() as sess:
+                sess['curr_user'] = '1'
+            resp = client.get(f"/parties/{party_id}", follow_redirects=True)
             html = resp.get_data(as_text=True)
 
-            self.assertIn(f"""<a href="" class="nav-link">{self.party.leader.name}</a>""", html)
+        self.assertIn(f"""<a href="" class="nav-link">{leader_name}</a>""", html)
             
         
 

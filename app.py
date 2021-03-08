@@ -194,6 +194,9 @@ def show_party(party_id):
     if not party:
         flash("Sorry, we can't find that party", category='warning')
         return redirect('/')
+    if not g.user or g.user not in party.members:
+        flash("You must join the party to view that", category='warning')
+        return redirect('/parties/add_member')
     if party.done_voting():
         return redirect(f'/done_voting/{party_id}')
     return render_template('/parties/view.html', party=party)
